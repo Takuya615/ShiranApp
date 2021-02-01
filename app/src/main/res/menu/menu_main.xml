@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="jp.tsumura.takuya.self_maintenance.MainActivity">
+
+
+
+    <item
+    android:id="@+id/action_settings"
+    android:orderInCategory="100"
+    android:title="アカウント設定"
+    app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="100"
+        android:title="ログアウト"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_privacy_policy"
+        android:orderInCategory="100"
+        android:title="プライバシーポリシー"
+        app:showAsAction="never" />
+
+</menu>

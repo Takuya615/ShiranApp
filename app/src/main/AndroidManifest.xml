@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tsumutaku.shiranapp">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/shira_app"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/shira_app_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ShiranApp">
+        <activity android:name=".ui.video.GalleryActivity"></activity>
+        <activity android:name=".setting.AccountSettingActivity" />
+        <activity android:name=".setting.PrivacyPolicyActivity" />
+        <activity android:name=".setting.LoginActivity" />
+        <activity android:name=".camera.CameraXActivity" />
+        <activity
+            android:name=".setting.tutorial.TutorialActivity"
+            android:theme="@style/WelcomeScreenTheme"/>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

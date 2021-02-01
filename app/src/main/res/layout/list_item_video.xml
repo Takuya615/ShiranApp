@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="いいね"
+        android:textSize="15dp"
+        android:textColor="@color/colorPrimary"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.03"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.01" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/itemLike"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:text="0"
+            android:textSize="30dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/colorPrimary"
+            android:gravity="center"
+            android:layout_marginVertical="15dp"
+            />
+
+
+        <TextView
+            android:id="@+id/itemTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginVertical="15dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="2020年02月20日20時20分"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/itemdeleate"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:text="削除"
+            android:textSize="20dp"
+            android:layout_marginVertical="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="13dp"/>
+
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

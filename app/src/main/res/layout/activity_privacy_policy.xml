@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".setting.PrivacyPolicyActivity">
+
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="\n　当社は、個人情報保護方針を定め、個人情報保護の仕組みを構築し、その重要性を認識したうえで、個人情報の保護を徹底致します。"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\n  利用者情報の取得と利用目的"
+                android:textSize="20dp"
+                />
+
+
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="​本サービスで取得するユーザー情報・取得方法・目的は以下のとおりです。\n
+
+□ユーザー情報\n
+　　メールアドレスとパスワード\n
+□取得方法\n
+　　お客様の操作による取得\n
+□利用者情報の利用目的\n
+　　本サービス内でのアカウント作成およびログインのため\n\n
+
+□ユーザー情報\n
+　　動画と音声\n
+□取得方法\n
+　　お客様の操作による取得\n
+□利用者情報の利用目的\n
+　　お客様ご本人またはお客様が許可する他ユーザーが、それらを活動記録として視聴するため\n\n
+
+□ユーザー情報\n
+　　​アプリケーション内の各操作の件数、容量、処理時間、設定情報、クラッシュ情報等の利用実績情報\n
+□取得方法\n
+　　アプリケーションによる自動取得\n
+□利用者情報の利用目的\n
+　　サービス利用実態の分析によるサービス性向上に役立てるため\n\n
+
+□ユーザー情報\n
+　　​動画のメタデータ、撮影日時、各種サービスの利用頻度などの実績情報\n
+□取得方法\n
+　　アプリケーションによる自動取得\n
+□利用者情報の利用目的\n
+　　お客様への各種フィードバックによるサービス性向上に役立てるため"
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\n  利用者情報の第三者提供"
+                android:textSize="20dp"
+                />
+
+
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="当社が管理を委託するホスティング会社のサーバーに送信されます。\n
+また次のような場合にも第三者に情報の開示をすることがあります。\n
+・統計的なデータなどユーザーを識別することができない状態で提供する場合\n
+・法令に基づき開示・提供を求められた場合" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\n  お問い合わせ先"
+                android:textSize="20dp"
+                />
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="\n ご不明な点がございましたらお問い合わせください"/>
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="​shiran.app.club@gmail.com"
+                android:autoLink="email"/>
+
+
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="\n詳細プライバシーポリシーについては下記URLから"/>
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="https://shiranapp.weebly.com/12503125211245212496124711254012509125221247112540.html"
+                android:autoLink="web"/>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
