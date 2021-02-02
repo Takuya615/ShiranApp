@@ -1,8 +1,10 @@
 package com.tsumutaku.shiranapp.setting.tutorial
 
 import android.app.Activity
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import com.stephentuso.welcome.*
 import com.tsumutaku.shiranapp.R
 
@@ -30,6 +32,7 @@ class TutorialActivity : WelcomeActivity() {
      */
 
     override fun configuration(): WelcomeConfiguration {
+
         return WelcomeConfiguration.Builder(this)
             .defaultBackgroundColor(BackgroundColor(Color.DKGRAY))
 

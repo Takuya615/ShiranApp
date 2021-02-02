@@ -3,8 +3,11 @@ package com.tsumutaku.shiranapp.camera
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 
 import android.view.*
 import android.widget.Button
@@ -12,7 +15,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.tsumutaku.shiranapp.MainActivity
 import com.tsumutaku.shiranapp.R
+import com.tsumutaku.shiranapp.setting.LoginActivity
+import com.tsumutaku.shiranapp.setting.tutorial.TutorialCoachMarkActivity
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 

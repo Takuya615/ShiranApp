@@ -19,6 +19,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.45" />
 
+    <com.tsumutaku.shiranapp.camera.GraphicOverlay
+        android:id="@+id/graphicOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/view_finder"
+        app:layout_constraintEnd_toEndOf="@id/view_finder"
+        app:layout_constraintStart_toStartOf="@id/view_finder"
+        app:layout_constraintTop_toTopOf="@id/view_finder"
+        />
+
     <ImageButton
         android:id="@+id/capture_button"
         android:layout_width="72dp"

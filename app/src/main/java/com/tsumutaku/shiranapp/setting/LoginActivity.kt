@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -45,7 +46,6 @@ class LoginActivity : AppCompatActivity() {
 
         db = FirebaseFirestore.getInstance()
         mAuth = FirebaseAuth.getInstance()
-
 
         // アカウント作成処理のリスナー
         mCreateAccountListener = OnCompleteListener { task ->

@@ -62,7 +62,7 @@ class TutorialCoachMarkActivity(context:Context) {
                 // 表示するスピード
                 .setAnimation(DecelerateInterpolator(1f))
                 // 注目されたいところ（複数指定も可能）
-                .setTargets(Target1)//firstTarget,
+                .setTargets(Target1)
                 // 注目されたいところ以外をタップする時に閉じられるかどうか
                 .setClosedOnTouchedOutside(true)
             // コーチマーク表示される時になんかする
@@ -86,50 +86,31 @@ class TutorialCoachMarkActivity(context:Context) {
             g.putBoolean("Tuto2", true)
             g.commit()
 
-            //val target1 = activity.findViewById<Button>(R.id.taskButton)
-            //val Target1 = sreateUI(target1,activity,"　タップして報酬をもらいましょう","ここに次にすべきタスクが表示されます。" +
-            //        "\nタスクが完了したら、ここから報酬をもらい次のステップへ進みましょう",0f,0f,2f)
             val target1 = activity.findViewById<BottomNavigationView>(R.id.nav_view)
-
-            val Target1= SimpleTarget.Builder(activity)
-                .setShape(Circle(0f))//ハイライトの大きさ
-                .setTitle("カンタンすぎましたか？")
-                .setDescription("より毎日つづけやすくするため、１回の撮影時間はほんの数秒です。\nただし、目標時間は３日おきに伸びていきます。")
-                .setOverlayPoint(2f,500f )//文字列の位置
-                .build()
-            val Target2 = SimpleTarget.Builder(activity)
-                .setShape(Circle(0f))//ハイライトの大きさ
-                .setTitle("継続できる人へ")
-                .setDescription("６０日間つづけられれば、そのまま習慣になる確率がぐっと上がります。\n" +
-                        "今後、新たな習慣化テクニックも導入していくので、一緒に頑張りましょう。")
-                .setOverlayPoint(2f,500f )//文字列の位置
-                .build()
+            val x = target1.width.toFloat()
+            val y = target1.height.toFloat()
+            val Target1 = sreateUI(target1,activity,"　カンタンすぎましたか？",
+                "より毎日つづけやすくするため、１回の撮影時間はほんの数秒です。\n ただし、目標時間は３日おきに伸びていきます。",-x,-y,-8f)
+            val Target2 = sreateUI(target1,activity,"　継続できる人に",
+                "６０日間つづけられれば、そのまま習慣になる確率がぐっと上がります。\n" +
+                        "今後、新たな習慣化テクニックも導入していくので、一緒に頑張りましょう。",-x,-y,-8f)
 
             // コーチマークを作成
             Spotlight.with(activity)
                 // コーチマーク表示される時の背景の色
                 .setOverlayColor(R.color.colorCoachMark)
                 // 表示する時間
-                .setDuration(1000L)
+                .setDuration(500L)
                 // 表示するスピード
                 .setAnimation(DecelerateInterpolator(1f))
                 // 注目されたいところ（複数指定も可能）
-                .setTargets(Target1,Target2)//,Target5,Target6
+                .setTargets(Target1,Target2)
                 // 注目されたいところ以外をタップする時に閉じられるかどうか
                 .setClosedOnTouchedOutside(true)
-                /*
-            // コーチマーク表示される時になんかする
-            .setOnSpotlightStateListener(object : OnSpotlightStateChangedListener {
-                override fun onStarted() {
-                    Toast.makeText(context, "spotlight is started", Toast.LENGTH_SHORT)
-                        .show()
-                }
-
-                override fun onEnded() {
-                    Toast.makeText(context, "spotlight is ended", Toast.LENGTH_SHORT).show()
-                }
-            })
-                 */
+                .setOnSpotlightStateListener(object : OnSpotlightStateChangedListener {
+                    override fun onStarted() {    }
+                    override fun onEnded() {    }
+                })
                 .start()
         }
     }

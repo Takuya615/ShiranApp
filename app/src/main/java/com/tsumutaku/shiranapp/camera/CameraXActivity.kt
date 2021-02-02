@@ -117,9 +117,10 @@ class CameraXActivity : AppCompatActivity(){
             Coach.CoachMark3(this, this)
         },1000)
 
-        /*ポーズ検出
+        //ポーズ検出
+        /*
         var runnable = Runnable {  }
-        val handler = Handler(Looper.getMainLooper())
+        //val handler = Handler(Looper.getMainLooper())
         runnable = Runnable {
 
             val bitmap = viewFinder.bitmap
@@ -133,6 +134,7 @@ class CameraXActivity : AppCompatActivity(){
         handler.post(runnable)
 
          */
+
 
     }
 
