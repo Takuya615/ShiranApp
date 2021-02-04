@@ -31,6 +31,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import com.tsumutaku.shiranapp.MainActivity
 import com.tsumutaku.shiranapp.R
 import com.tsumutaku.shiranapp.setting.Methods
 import com.tsumutaku.shiranapp.setting.tutorial.TutorialCoachMarkActivity
@@ -305,5 +306,4 @@ class CameraXActivity : AppCompatActivity(){
         val timer = String.format("%02d:%02d", minite, seconds)
         return  timer
     }
-
 }

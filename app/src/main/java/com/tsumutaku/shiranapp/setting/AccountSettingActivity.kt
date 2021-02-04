@@ -23,7 +23,7 @@ class AccountSettingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_setting)
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)//非表示
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)//表示
         title = "アカウント名設定"
 
         val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
@@ -37,9 +37,7 @@ class AccountSettingActivity : AppCompatActivity() {
             val Coach = TutorialCoachMarkActivity(this)
             Coach.CoachMark6(this,this)
         }, 1000)
-
          */
-
 
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser
@@ -60,6 +58,9 @@ class AccountSettingActivity : AppCompatActivity() {
                     mRealm().addPerson(Name,uid)
                     Toast.makeText(this,"アカウント名を登録しました", Toast.LENGTH_SHORT).show()
                     //supportFragmentManager.beginTransaction().replace(R.id.frameLayout, FriendListFragment()).commit()
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("Tuto",100)
+                    startActivity(intent)
                     finish()
                     //val intent= Intent(this, MainActivity::class.java)
                     //startActivity(intent)

@@ -2,6 +2,7 @@ package com.tsumutaku.shiranapp.setting.tutorial
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 
 import android.content.SharedPreferences
 import android.provider.Settings
@@ -25,7 +26,7 @@ import com.takusemba.spotlight.target.SimpleTarget
 import com.tsumutaku.shiranapp.setting.mRealm
 
 import com.tsumutaku.shiranapp.R
-
+import com.tsumutaku.shiranapp.camera.CameraXActivity
 
 
 class TutorialCoachMarkActivity(context:Context) {
@@ -51,7 +52,7 @@ class TutorialCoachMarkActivity(context:Context) {
             g.commit()
 
             val target1 = activity.findViewById<FloatingActionButton>(R.id.fab)
-            val Target1 = sreateCircleUI(target1,activity,"　ココからカメラへ移動します","",0f,0f,-2f)
+            val Target1 = sreateCircleUI(target1,activity,"　１日１回\n ココからカメラへ移動します","",0f,0f,-2f)
 
             // コーチマークを作成
             Spotlight.with(activity)
@@ -71,7 +72,7 @@ class TutorialCoachMarkActivity(context:Context) {
                     //Toast.makeText(context, "spotlight is started", Toast.LENGTH_SHORT).show()
                 }
                 override fun onEnded() {
-                    //val intent= Intent(context, GoalSettingActivity::class.java)
+                    //val intent= Intent(context, CameraXActivity::class.java)
                     //activity.startActivity(intent)
                     //activity.recreate()
                 }
@@ -82,7 +83,7 @@ class TutorialCoachMarkActivity(context:Context) {
 
 //メイン画面でタスクボタンのコーチマーク
     fun CoachMark2(activity: Activity,context: Context){
-        if(!Tuto2){
+        if(!Tuto2){//true
             g.putBoolean("Tuto2", true)
             g.commit()
 
@@ -91,9 +92,11 @@ class TutorialCoachMarkActivity(context:Context) {
             val y = target1.height.toFloat()
             val Target1 = sreateUI(target1,activity,"　カンタンすぎましたか？",
                 "より毎日つづけやすくするため、１回の撮影時間はほんの数秒です。\n ただし、目標時間は３日おきに伸びていきます。",-x,-y,-8f)
-            val Target2 = sreateUI(target1,activity,"　継続できる人に",
-                "６０日間つづけられれば、そのまま習慣になる確率がぐっと上がります。\n" +
-                        "今後、新たな習慣化テクニックも導入していくので、一緒に頑張りましょう。",-x,-y,-8f)
+
+            val Target2 = sreateUI(target1,activity,"　継続できる人に", "週4日以上を、６０日間つづけられれば、そのまま習慣になる確率がぐっと上がります。\n" +
+                    "今後、新たな習慣化テクニックも導入していくので、一緒に頑張りましょう。",-x,-y,-8f)
+
+
 
             // コーチマークを作成
             Spotlight.with(activity)
@@ -104,16 +107,17 @@ class TutorialCoachMarkActivity(context:Context) {
                 // 表示するスピード
                 .setAnimation(DecelerateInterpolator(1f))
                 // 注目されたいところ（複数指定も可能）
-                .setTargets(Target1,Target2)
+                .setTargets(Target1,Target2)//
                 // 注目されたいところ以外をタップする時に閉じられるかどうか
                 .setClosedOnTouchedOutside(true)
                 .setOnSpotlightStateListener(object : OnSpotlightStateChangedListener {
                     override fun onStarted() {    }
-                    override fun onEnded() {    }
+                    override fun onEnded() { }// CoachMark2pluse(activity,context)
                 })
                 .start()
         }
     }
+
 
 
 

@@ -49,7 +49,11 @@ class CameraDialogFragment(mTimerSec: Int): DialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        val intent= Intent(requireContext(), MainActivity::class.java)
+        intent.putExtra("Tuto",200)
+        startActivity(intent)
         requireActivity().finish()
+        //MainActivity().coachMark(requireActivity(),requireContext())
     }
 
 /*

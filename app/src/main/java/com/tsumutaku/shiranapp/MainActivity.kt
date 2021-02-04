@@ -1,5 +1,6 @@
 package com.tsumutaku.shiranapp
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -44,37 +45,37 @@ class MainActivity : AppCompatActivity() {
             //progressbar.visibility = android.widget.ProgressBar.VISIBLE
             val intent= Intent(this, CameraXActivity::class.java)
             startActivity(intent)
-            coachMark()
+            finish()
         }
 
         val user= FirebaseAuth.getInstance().currentUser
         if(user==null){//ログインしていなければ
             val intent= Intent(this, LoginActivity::class.java)
             startActivity(intent)
-            coachMark()
+            finish()
         }
-
+        val Tuto = intent.getIntExtra("Tuto",0)
+        coachMark(Tuto)
     }
 
-    fun coachMark(){
-        val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+    fun coachMark(TutoNum:Int){
+        //val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+        //val Tuto1 : Boolean = prefs.getBoolean("Tuto1",false)
+        //val Tuto2 : Boolean = prefs.getBoolean("Tuto2",false)
         val Coach = TutorialCoachMarkActivity(this)
-
-        val Tuto1 : Boolean = prefs.getBoolean("Tuto1",false)
-        val Tuto2 : Boolean = prefs.getBoolean("Tuto2",false)
-
-        Log.d("tag","このタイミングでは、 tuto1が$Tuto1 tuto2が$Tuto2")
         val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed({
-
-            if (!Tuto1){
-                Coach.CoachMark1(this,this)
-            } else if(Tuto1&&!Tuto2){
-                Coach.CoachMark2(this,this)
+        when(TutoNum){
+            100 ->{
+                handler.postDelayed({
+                    Coach.CoachMark1(this,this)//activity,context
+                },1000)
             }
-
-        },1000)
-
+            200 -> {
+                handler.postDelayed({
+                    Coach.CoachMark2(this,this)//activity,context
+                },1000)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

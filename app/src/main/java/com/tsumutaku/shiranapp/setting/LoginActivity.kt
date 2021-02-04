@@ -71,18 +71,18 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
 
                 //ロギング Login
-                val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+                //val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
                 val bundle = Bundle()
 
                 // 成功した場合
                 if (mIsCreateAccount) {
                     Toast.makeText(this,"アカウントが作成されました", Toast.LENGTH_LONG).show()
-                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Sign_Up!")
-                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
+                    //bundle.putString(FirebaseAnalytics.Param.METHOD, "Sign_Up!")
+                    //firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
                 } else {
                     Toast.makeText(this,"ログインしました", Toast.LENGTH_LONG).show()
-                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Login")
-                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+                    //bundle.putString(FirebaseAnalytics.Param.METHOD, "Login")
+                    //firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
                 }
 
                 progressBar.visibility = View.GONE
@@ -101,6 +101,9 @@ class LoginActivity : AppCompatActivity() {
                 val nickName = mRealm().UidToName(uid)//まだ名前が登録されていなければ、設定画面へ移動
                 if(nickName.isEmpty()){
                     val intent = Intent(this, AccountSettingActivity::class.java)
+                    startActivity(intent)
+                }else{
+                    val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                 }
                 finish()
