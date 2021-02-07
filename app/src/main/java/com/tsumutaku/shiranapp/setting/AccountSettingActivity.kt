@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.tsumutaku.shiranapp.MainActivity
 import com.tsumutaku.shiranapp.R
 import com.tsumutaku.shiranapp.setting.tutorial.TutorialCoachMarkActivity
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_account_setting.*
 
 class AccountSettingActivity : AppCompatActivity() {
@@ -25,19 +26,7 @@ class AccountSettingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_account_setting)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)//表示
         title = "アカウント名設定"
-
-        val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
-        val TutoDummy : Boolean = prefs.getBoolean("TutoDummy",false)
-        val Tuto1 : Boolean = prefs.getBoolean("Tuto1",false)
-        val Tuto2 : Boolean = prefs.getBoolean("Tuto2",false)
-        Log.d("tag","dummy$TutoDummy tuto1が$Tuto1 tuto2が$Tuto2")
-
-        /*
-        Handler().postDelayed({
-            val Coach = TutorialCoachMarkActivity(this)
-            Coach.CoachMark6(this,this)
-        }, 1000)
-         */
+        Realm.init(this)
 
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser
@@ -62,8 +51,6 @@ class AccountSettingActivity : AppCompatActivity() {
                     intent.putExtra("Tuto",100)
                     startActivity(intent)
                     finish()
-                    //val intent= Intent(this, MainActivity::class.java)
-                    //startActivity(intent)
                 }else{
                     mRealm().update(uid,Name)
                     Snackbar.make(it, "アカウント名を変更しました", Snackbar.LENGTH_LONG).show()
@@ -80,6 +67,9 @@ class AccountSettingActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             android.R.id.home->{
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("Tuto",100)
+                startActivity(intent)
                 finish()
             }
         }

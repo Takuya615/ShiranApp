@@ -30,21 +30,14 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mCreateAccountListener: OnCompleteListener<AuthResult>
     private lateinit var mLoginListener: OnCompleteListener<AuthResult>
-    //private lateinit var mDataBaseReference: DatabaseReference
-    private lateinit var db: FirebaseFirestore
-    // アカウント作成時にフラグを立て、ログイン処理後に名前をFirebaseに保存する
     private var mIsCreateAccount = false
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         title = "ログイン　/ アカウント作成"
-        Realm.init(this)
         TutorialActivity.showIfNeeded(this,savedInstanceState)//チューとリアル
-
-        db = FirebaseFirestore.getInstance()
         mAuth = FirebaseAuth.getInstance()
 
         // アカウント作成処理のリスナー
@@ -60,8 +53,8 @@ class LoginActivity : AppCompatActivity() {
                 // 失敗した場合
                 // エラーを表示する
                 val view = findViewById<View>(android.R.id.content)
-                Snackbar.make(view, "アカウント作成に失敗しました", Snackbar.LENGTH_LONG).show()
-                // プログレスバーを非表示にする
+                Snackbar.make(view, "アカウント作成 失敗\n", Snackbar.LENGTH_LONG).show()//あなたの運動したくないという無意識が、妨害しています。すこし時間をおいてみましょう
+                // プログレスバーを非表示にする　　　　　　　　　　　
                 progressBar.visibility = View.GONE
             }
         }
@@ -69,20 +62,16 @@ class LoginActivity : AppCompatActivity() {
         // ログイン処理のリスナー
         mLoginListener = OnCompleteListener { task ->
             if (task.isSuccessful) {
-
-                //ロギング Login
-                //val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+                //ログイン
+                val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
                 val bundle = Bundle()
-
                 // 成功した場合
                 if (mIsCreateAccount) {
-                    Toast.makeText(this,"アカウントが作成されました", Toast.LENGTH_LONG).show()
-                    //bundle.putString(FirebaseAnalytics.Param.METHOD, "Sign_Up!")
-                    //firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
+                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Sign_Up!")
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
                 } else {
-                    Toast.makeText(this,"ログインしました", Toast.LENGTH_LONG).show()
-                    //bundle.putString(FirebaseAnalytics.Param.METHOD, "Login")
-                    //firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Login")
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
                 }
 
                 progressBar.visibility = View.GONE
@@ -97,19 +86,13 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
                  */
-                val uid = mAuth.currentUser!!.uid
-                val nickName = mRealm().UidToName(uid)//まだ名前が登録されていなければ、設定画面へ移動
-                if(nickName.isEmpty()){
-                    val intent = Intent(this, AccountSettingActivity::class.java)
-                    startActivity(intent)
-                }else{
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                }
+
+                val intent = Intent(this, AccountSettingActivity::class.java)
+                startActivity(intent)
                 finish()
 
             } else {
-                // 失敗した場合
+                // 失敗した場合              //あなたの無意識がログインを妨害しています。そんなに運動したくないのですか？？
                 Toast.makeText(this,"ログイン失敗\nメールアドレスかパスワードに間違いがないか確認してください", Toast.LENGTH_LONG).show()
                 progressBar.visibility = View.GONE
             }
