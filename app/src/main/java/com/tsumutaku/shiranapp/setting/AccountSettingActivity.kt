@@ -14,7 +14,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.tsumutaku.shiranapp.MainActivity
 import com.tsumutaku.shiranapp.R
 import com.tsumutaku.shiranapp.setting.tutorial.TutorialCoachMarkActivity
-import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_account_setting.*
 
 class AccountSettingActivity : AppCompatActivity() {
