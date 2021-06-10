@@ -51,7 +51,7 @@ class TutorialCoachMarkActivity(context:Context) {
             g.commit()
 
             val target1 = activity.findViewById<FloatingActionButton>(R.id.fab)
-            val Target1 = sreateCircleUI(target1,activity,"　ココからカメラへ移動します","",0f,0f,-2f)
+            val Target1 = sreateCircleUI(target1,activity,"　１日１回\n ココからカメラへ移動します","",0f,0f,-2f)
 
             // コーチマークを作成
             Spotlight.with(activity)
@@ -62,7 +62,7 @@ class TutorialCoachMarkActivity(context:Context) {
                 // 表示するスピード
                 .setAnimation(DecelerateInterpolator(1f))
                 // 注目されたいところ（複数指定も可能）
-                .setTargets(Target1)//firstTarget,
+                .setTargets(Target1)
                 // 注目されたいところ以外をタップする時に閉じられるかどうか
                 .setClosedOnTouchedOutside(true)
             // コーチマーク表示される時になんかする
@@ -86,50 +86,31 @@ class TutorialCoachMarkActivity(context:Context) {
             g.putBoolean("Tuto2", true)
             g.commit()
 
-            //val target1 = activity.findViewById<Button>(R.id.taskButton)
-            //val Target1 = sreateUI(target1,activity,"　タップして報酬をもらいましょう","ここに次にすべきタスクが表示されます。" +
-            //        "\nタスクが完了したら、ここから報酬をもらい次のステップへ進みましょう",0f,0f,2f)
             val target1 = activity.findViewById<BottomNavigationView>(R.id.nav_view)
+            val x = target1.width.toFloat()
+            val y = target1.height.toFloat()
+            val Target1 = sreateUI(target1,activity,"　カンタンすぎましたか？",
+                "より毎日つづけやすくするため、１回の撮影時間はほんの数秒です。\n ただし、¸この時間は３日おきに自動で伸びていきます。",-x,-y,-8f)
 
-            val Target1= SimpleTarget.Builder(activity)
-                .setShape(Circle(0f))//ハイライトの大きさ
-                .setTitle("カンタンすぎましたか？")
-                .setDescription("より毎日つづけやすくするため、１回の撮影時間はほんの数秒です。\nただし、目標時間は３日おきに伸びていきます。")
-                .setOverlayPoint(2f,500f )//文字列の位置
-                .build()
-            val Target2 = SimpleTarget.Builder(activity)
-                .setShape(Circle(0f))//ハイライトの大きさ
-                .setTitle("継続できる人へ")
-                .setDescription("６０日間つづけられれば、そのまま習慣になる確率がぐっと上がります。\n" +
-                        "今後、新たな習慣化テクニックも導入していくので、一緒に頑張りましょう。")
-                .setOverlayPoint(2f,500f )//文字列の位置
-                .build()
+            val Target2 = sreateUI(target1,activity,"　継続できる人に", "週4日以上を、６０日間つづけられれば、そのまま習慣になる確率がぐっと上がります。"
+                    ,-x,-y,-8f)
 
             // コーチマークを作成
             Spotlight.with(activity)
                 // コーチマーク表示される時の背景の色
                 .setOverlayColor(R.color.colorCoachMark)
                 // 表示する時間
-                .setDuration(1000L)
+                .setDuration(500L)
                 // 表示するスピード
                 .setAnimation(DecelerateInterpolator(1f))
                 // 注目されたいところ（複数指定も可能）
-                .setTargets(Target1,Target2)//,Target5,Target6
+                .setTargets(Target1,Target2)
                 // 注目されたいところ以外をタップする時に閉じられるかどうか
                 .setClosedOnTouchedOutside(true)
-                /*
-            // コーチマーク表示される時になんかする
-            .setOnSpotlightStateListener(object : OnSpotlightStateChangedListener {
-                override fun onStarted() {
-                    Toast.makeText(context, "spotlight is started", Toast.LENGTH_SHORT)
-                        .show()
-                }
-
-                override fun onEnded() {
-                    Toast.makeText(context, "spotlight is ended", Toast.LENGTH_SHORT).show()
-                }
-            })
-                 */
+                .setOnSpotlightStateListener(object : OnSpotlightStateChangedListener {
+                    override fun onStarted() {    }
+                    override fun onEnded() {    }
+                })
                 .start()
         }
     }
@@ -145,8 +126,8 @@ class TutorialCoachMarkActivity(context:Context) {
             val small=prefs.getInt(activity.getString(R.string.prefs_smalltime),0)
 
             val target = activity.findViewById<TextView>(R.id.goal_timer)
-            val Target = sreateUI(target,activity,"ここに目標時間が表示されます",
-                "腹筋やスクワットなど、好きな運動を制限時間までやりましょう。",0f,0f,3f)
+            val Target = sreateUI(target,activity,"ここに制限時間が表示されます",
+                "腹筋やスクワットなど、室内でできる好きな運動を制限時間までやりましょう。",0f,0f,3f)
             /*
             val target2 = activity.findViewById<ImageButton>(R.id.capture_button)
             val Target2 = sreateCircleUI(target2,activity,"ストレージとプライバシー",
@@ -236,14 +217,24 @@ class TutorialCoachMarkActivity(context:Context) {
             g.putBoolean("Tuto4", true)
             g.commit()
 
+            val target1 = activity.findViewById<BottomNavigationView>(R.id.request)
+            val x = target1.width.toFloat()
+            val y = target1.height.toFloat()
+            val Target = sreateUI(target1,activity,"サポートリクエスト",
+                    "友達や家族など信頼できる人に、あなたの動画を公開し、応援してもらうことができます。",0f,0f,0f)
+            val Target2 = sreateUI(target1,activity,"ピアプレッシャー",
+                    "こうすることで、責任感が生まれ続きやすくなります。" +
+                            "\nまた、ある調査では監視の目をつけると、それがなくなった後でも、習慣を続ける傾向が増すことがわかっています。",0f,0f,0f)
+
+            /*
             val user= FirebaseAuth.getInstance().currentUser
             val myName= mRealm().UidToName(user!!.uid)
             val Target = SimpleTarget.Builder(activity)
                 .setShape(Circle(0f))//ハイライトの大きさ
-                .setTitle("  試しに使ってみよう")
-                .setDescription("自分の名前「$myName」で検索し、リクエストしてみましょう\nフレンドリストに戻るとあなたからのリクエストが届きます。")
+                .setTitle("")
+                .setDescription("")
                 .setOverlayPoint(2f,500f )//文字列の位置
-                .build()
+                .build()*/
 
             // コーチマークを作成
             Spotlight.with(activity)

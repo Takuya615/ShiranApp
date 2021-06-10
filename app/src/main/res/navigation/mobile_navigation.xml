@@ -12,14 +12,27 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_video"
-        android:name="com.tsumutaku.shiranapp.ui.video.VideoFragment"
-        android:label="@string/title_video"
-        tools:layout="@layout/fragment_video" />
-
-    <fragment
         android:id="@+id/navigation_friends"
         android:name="com.tsumutaku.shiranapp.ui.friends.friendsFragment"
         android:label="@string/title_friends"
-        tools:layout="@layout/fragment_friends" />
+        tools:layout="@layout/fragment_friends" >
+        <action
+            android:id="@+id/action_friendsToVideoList"
+            app:destination="@+id/navigation_video_list"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_medal"
+        android:name="com.tsumutaku.shiranapp.ui.medal.MedalFragment"
+        android:label="@string/title_medal"
+        tools:layout="@layout/fragment_medal" />
+
+    <fragment
+        android:id="@+id/navigation_video_list"
+        android:name="com.tsumutaku.shiranapp.ui.friends.VideoListFragment"
+        android:label="@string/title_friends"
+        tools:layout="@layout/fragment_video_list" />
+
+
+
 </navigation>

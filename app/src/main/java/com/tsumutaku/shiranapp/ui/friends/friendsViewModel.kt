@@ -10,4 +10,7 @@ class friendsViewModel : ViewModel() {
         value = "ただいま工事中"
     }
     val text: LiveData<String> = _text
+
+    var modelUid:String = ""
+
 }

@@ -52,7 +52,7 @@ class mRealm {
         return info
     }
 
-    //
+    //ユーザーIDからを名前取得
     fun UidToName(SearchedUid: String): String {
         if (!realm.isInTransaction) {
             realm.beginTransaction()
@@ -61,6 +61,20 @@ class mRealm {
         for (i in taskRealmResults) {
             if (i.AcUid == SearchedUid) {
                 return i.Name
+            }
+        }
+        realm.close()
+        return ""
+    }
+    //名前からをユーザーID取得
+    fun NameToUid(SearchedName: String): String {
+        if (!realm.isInTransaction) {
+            realm.beginTransaction()
+        }
+        val taskRealmResults = realm.where(Person::class.java).findAll()
+        for (i in taskRealmResults) {
+            if (i.Name == SearchedName) {
+                return i.AcUid
             }
         }
         realm.close()

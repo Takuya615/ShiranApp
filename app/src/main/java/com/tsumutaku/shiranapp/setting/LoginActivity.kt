@@ -4,9 +4,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.MenuItem
+import android.util.Log
+
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -16,36 +15,105 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.tsumutaku.shiranapp.MainActivity
 import com.tsumutaku.shiranapp.R
 import com.tsumutaku.shiranapp.setting.tutorial.TutorialActivity
-import com.tsumutaku.shiranapp.setting.tutorial.TutorialCoachMarkActivity
-import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var mAuth: FirebaseAuth
+    private lateinit var auth: FirebaseAuth
     private lateinit var mCreateAccountListener: OnCompleteListener<AuthResult>
     private lateinit var mLoginListener: OnCompleteListener<AuthResult>
-    //private lateinit var mDataBaseReference: DatabaseReference
-    private lateinit var db: FirebaseFirestore
-    // アカウント作成時にフラグを立て、ログイン処理後に名前をFirebaseに保存する
     private var mIsCreateAccount = false
-
-
+    private val TAG = "LoginActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         title = "ログイン　/ アカウント作成"
-        Realm.init(this)
+
+        auth = Firebase.auth
+        createButton.setOnClickListener { v ->
+            // キーボードが出てたら閉じる
+            val im = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            im.hideSoftInputFromWindow(v.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+
+            val email = emailText.text.toString()
+            val password = passwordText.text.toString()
+
+            if(email.isNotEmpty()&&password.isNotEmpty()){
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            if(!MainActivity.debag){
+                                val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+                                val bundle = Bundle()
+                                bundle.putString(FirebaseAnalytics.Param.METHOD, "Sign_Up!")
+                                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
+                            }
+                            if (MainActivity.debag){Log.d(TAG, "createUserWithEmail:success")}
+                            //val user = auth.currentUser
+                            val intent = Intent(this, AccountSettingActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            if (MainActivity.debag){Log.w(TAG, "createUserWithEmail:failure", task.exception)}
+                            Toast.makeText(baseContext, "アカウント作成 失敗", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            }
+
+        }
+
+        loginButton.setOnClickListener { v ->
+            // キーボードが出てたら閉じる
+            val im = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            im.hideSoftInputFromWindow(v.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+
+            val email = emailText.text.toString()
+            val password = passwordText.text.toString()
+            if(email.isNotEmpty()&&password.isNotEmpty()){
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            if(!MainActivity.debag){
+                                val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+                                val bundle = Bundle()
+                                bundle.putString(FirebaseAnalytics.Param.METHOD, "Login")
+                                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+                            }
+                            if (MainActivity.debag){Log.d(TAG, "signInWithEmail:success")}
+                            //val user = auth.currentUser
+                            val intent = Intent(this, AccountSettingActivity::class.java)
+                            startActivity(intent)
+                            finish()
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            if (MainActivity.debag){Log.w(TAG, "signInWithEmail:failure", task.exception)}
+                            Toast.makeText(baseContext, "ログイン 失敗", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            }
+        }
+
+        PPbtn.setOnClickListener {
+            val intent = Intent(this, PrivacyPolicyActivity::class.java)
+            startActivity(intent)
+        }
+    }
+    /*
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+        title = "ログイン　/ アカウント作成"
         TutorialActivity.showIfNeeded(this,savedInstanceState)//チューとリアル
-
-        db = FirebaseFirestore.getInstance()
         mAuth = FirebaseAuth.getInstance()
-
 
         // アカウント作成処理のリスナー
         mCreateAccountListener = OnCompleteListener { task ->
@@ -60,8 +128,8 @@ class LoginActivity : AppCompatActivity() {
                 // 失敗した場合
                 // エラーを表示する
                 val view = findViewById<View>(android.R.id.content)
-                Snackbar.make(view, "アカウント作成に失敗しました", Snackbar.LENGTH_LONG).show()
-                // プログレスバーを非表示にする
+                Snackbar.make(view, "アカウント作成 失敗\n", Snackbar.LENGTH_LONG).show()//あなたの運動したくないという無意識が、妨害しています。すこし時間をおいてみましょう
+                // プログレスバーを非表示にする　　　　　　　　　　　
                 progressBar.visibility = View.GONE
             }
         }
@@ -69,44 +137,28 @@ class LoginActivity : AppCompatActivity() {
         // ログイン処理のリスナー
         mLoginListener = OnCompleteListener { task ->
             if (task.isSuccessful) {
-
-                //ロギング Login
-                val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-                val bundle = Bundle()
-
-                // 成功した場合
-                if (mIsCreateAccount) {
-                    Toast.makeText(this,"アカウントが作成されました", Toast.LENGTH_LONG).show()
-                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Sign_Up!")
-                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
-                } else {
-                    Toast.makeText(this,"ログインしました", Toast.LENGTH_LONG).show()
-                    bundle.putString(FirebaseAnalytics.Param.METHOD, "Login")
-                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+                //ログイン
+                if(!MainActivity.debag){
+                    val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+                    val bundle = Bundle()
+                    // 成功した場合
+                    if (mIsCreateAccount) {
+                        bundle.putString(FirebaseAnalytics.Param.METHOD, "Sign_Up!")
+                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
+                    } else {
+                        bundle.putString(FirebaseAnalytics.Param.METHOD, "Login")
+                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+                    }
                 }
 
                 progressBar.visibility = View.GONE
-                /*
-                val prefs = getSharedPreferences( "preferences_key_sample", Context.MODE_PRIVATE)
-                val Tuto1 : Boolean = prefs.getBoolean("Tuto1",false)
-                if(!Tuto1){//true
-                    val intent = Intent(this, AccountSettingActivity::class.java)
-                    startActivity(intent)
-                }else{
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                }
-                 */
-                val uid = mAuth.currentUser!!.uid
-                val nickName = mRealm().UidToName(uid)//まだ名前が登録されていなければ、設定画面へ移動
-                if(nickName.isEmpty()){
-                    val intent = Intent(this, AccountSettingActivity::class.java)
-                    startActivity(intent)
-                }
+
+                val intent = Intent(this, AccountSettingActivity::class.java)
+                startActivity(intent)
                 finish()
 
             } else {
-                // 失敗した場合
+                // 失敗した場合              //あなたの無意識がログインを妨害しています。そんなに運動したくないのですか？？
                 Toast.makeText(this,"ログイン失敗\nメールアドレスかパスワードに間違いがないか確認してください", Toast.LENGTH_LONG).show()
                 progressBar.visibility = View.GONE
             }
@@ -172,6 +224,8 @@ class LoginActivity : AppCompatActivity() {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(mLoginListener)
     }
 
+     */
+
     /*
     //戻るボタンを押すと今いるviewを削除する
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -184,4 +238,5 @@ class LoginActivity : AppCompatActivity() {
     }
 
      */
+
 }

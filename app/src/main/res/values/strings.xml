@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">しらんプリ</string>
     <string name="title_home">ホーム</string>
-    <string name="title_video">ビデオ</string>
-    <string name="title_friends">？？？</string>
+    <string name="title_friends">ビデオ</string>
+    <string name="title_medal">？？？</string>
+    <string name="progress">Progress</string>
 
     //新しいデータに更新するときには、リセットが必要なデータ
     <string name="prefs_check_point">firstfragment_1</string>
@@ -10,6 +11,9 @@
     <string name="prefs_smalltime">GoalSettingActivity</string>
     <string name="prefs_category">HabitCategory</string>
     <string name="prefs_dayly_check">daylyCheck</string>
+    <string name="prefs_support_requested">FriendSearchActivity</string>
+    <string name="privacyMode">privacyMode</string>
+
 
     //スコアとなる値
     <string name="score_totalDay">CameraDialogFragment1</string>

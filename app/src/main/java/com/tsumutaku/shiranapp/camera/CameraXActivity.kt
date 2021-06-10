@@ -2,19 +2,16 @@ package com.tsumutaku.shiranapp.camera
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
-import android.graphics.drawable.BitmapDrawable
 import android.media.MediaActionSound
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
-
 import android.util.Rational
 import android.util.Size
 import android.view.*
@@ -25,28 +22,26 @@ import androidx.camera.core.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
+import androidx.work.*
+import com.tsumutaku.shiranapp.MainActivity
 import com.tsumutaku.shiranapp.R
 import com.tsumutaku.shiranapp.setting.Methods
 import com.tsumutaku.shiranapp.setting.tutorial.TutorialCoachMarkActivity
+import com.tsumutaku.shiranapp.ui.home.HomeViewModel
 import kotlinx.android.synthetic.main.activity_camera_x.*
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.IOException
 import java.util.*
 
 
 private const val REQUEST_CODE_PERMISSIONS = 10
-private val REQUIRED_PERMISSIONS = arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.RECORD_AUDIO)
+private val REQUIRED_PERMISSIONS = arrayOf(
+    android.Manifest.permission.CAMERA,
+    android.Manifest.permission.RECORD_AUDIO,
+    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+)
 
 @SuppressLint("RestrictedApi")
 class CameraXActivity : AppCompatActivity(){
-
 
     private lateinit var captureButton: ImageButton
     private lateinit var switchButton:ImageButton
@@ -56,14 +51,16 @@ class CameraXActivity : AppCompatActivity(){
     private var mTimer: Timer? = null
     private var mTimerSec:Int = 0
     private var taskSec: Int = 0
-    private var mHandler = Handler()
+    //private var mHandler = Handler()
     private var lensFacing = CameraX.LensFacing.FRONT
 
 
     private lateinit var viewFinder: TextureView
     private lateinit var videoCapture: VideoCapture
-    //private lateinit var graphicOverlay:GraphicOverlay
+    private lateinit var graphicOverlay:GraphicOverlay
     private var TurnOn:Boolean = false
+    private var ScoreStop:Boolean = false
+    private var IntensityPoint:Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +68,7 @@ class CameraXActivity : AppCompatActivity(){
         setContentView(R.layout.activity_camera_x)
         //画面をオンのままにしておく
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        supportActionBar!!.hide()
 
         viewFinder = findViewById(R.id.view_finder)
         captureButton = findViewById(R.id.capture_button)
@@ -78,7 +76,7 @@ class CameraXActivity : AppCompatActivity(){
         switchButton = findViewById(R.id.switch_button)
         backButton = findViewById(R.id.back_button)
         taskSec = Methods().taskTimeCaluculate(this)
-        //graphicOverlay = findViewById(R.id.graphicOverlay)
+        graphicOverlay = findViewById(R.id.graphicOverlay)
         Sounds.getInstance(this)//音の初期化
 
         // カメラパーミッションの要求
@@ -107,6 +105,8 @@ class CameraXActivity : AppCompatActivity(){
         }
 
         backButton.setOnClickListener{
+            val intent= Intent(this@CameraXActivity, MainActivity::class.java)
+            startActivity(intent)
             finish()
         }
 
@@ -117,25 +117,23 @@ class CameraXActivity : AppCompatActivity(){
             Coach.CoachMark3(this, this)
         },1000)
 
-        /*ポーズ検出
+        //ポーズ検出
         var runnable = Runnable {  }
-        val handler = Handler(Looper.getMainLooper())
+        //val handler = Handler(Looper.getMainLooper())
         runnable = Runnable {
 
             val bitmap = viewFinder.bitmap
             if(bitmap!=null){graphicOverlay.poseDetectionML(bitmap)}//　　GraphicOverlayクラスで、　ポーズ検出し、それを画面に描画する
-            if(TurnOn){
-                graphicOverlay.ExerciseIntensity()
+            if(ScoreStop){
+               graphicOverlay.ExerciseIntensity()//表示されているスコアの値に加算していくメソッド
             }
 
             handler.postDelayed(runnable,100)
         }
         handler.post(runnable)
 
-         */
 
     }
-
 
     private fun startCamera() {
         CameraX.unbindAll()
@@ -168,6 +166,7 @@ class CameraXActivity : AppCompatActivity(){
 
 
         val videoCaptureConfig = VideoCaptureConfig.Builder().apply {
+            setVideoFrameRate(30)//¸フレームレートの設定（１秒に３０フレ）
             setLensFacing(lensFacing)//内・外カメラの使い分け用
             setTargetResolution(screenSize)//　Size(480, 360)　　Size(metrics.widthPixels, metrics.heightPixels)
             setTargetAspectRatio(screenAspectRatio)
@@ -178,44 +177,75 @@ class CameraXActivity : AppCompatActivity(){
         val captureButton = findViewById<ImageButton>(R.id.capture_button)
         captureButton.setOnClickListener {
             val sound = MediaActionSound()//シャッター音
-            val file = File(this.filesDir,
-                "sample.mp4")//${System.currentTimeMillis()}
+            val file = File(this.filesDir, "sample.mp4")//${System.currentTimeMillis()}
             if(!TurnOn){
-                TurnOn = true
-
+                captureButton.visibility = View.INVISIBLE
                 switchButton.visibility = View.INVISIBLE
                 backButton.visibility = View.INVISIBLE
-                captureButton.setImageResource(R.drawable.ic_stop)
-                captureButton.setBackgroundColor(Color.WHITE)
-                backView.setBackgroundColor(Color.WHITE)
-                TimeRecorder(this)
-                sound.play(MediaActionSound.START_VIDEO_RECORDING)//シャッター音
+                graphicOverlay.countDown()
 
-                videoCapture.startRecording(file, object: VideoCapture.OnVideoSavedListener{
-                    override fun onVideoSaved(file: File?) {
-                        //Log.d("tag", "ビデオファイル　ゲット！！")
-                        Storage().savefile(file!!)//ストレージとストアに保存、さらにFileを削除
-                    }
-                    override fun onError(useCaseError: VideoCapture.UseCaseError?, message: String?, cause: Throwable?) {
-                        //Log.d("tag", "ビデオ　しっぱい。。。。: $message")
-                        //Log.d("tag", "ビデオ　しっぱい。。。。: $cause")
-                    }
-                })
+                val handler = Handler(Looper.getMainLooper())//3秒たってから
+                handler.postDelayed({
+                    TurnOn = true
+                    ScoreStop = true
+                    captureButton.visibility = View.VISIBLE
+                    captureButton.setImageResource(R.drawable.ic_stop)
+                    captureButton.setBackgroundColor(Color.WHITE)
+                    backView.setBackgroundColor(Color.WHITE)
+                    TimeRecorder(this)
+                    sound.play(MediaActionSound.START_VIDEO_RECORDING)//シャッター音
+
+
+
+                    videoCapture.startRecording(file, object: VideoCapture.OnVideoSavedListener{
+                        override fun onVideoSaved(file: File?) {
+                            val prefs = getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+                            prefs.edit().putInt(getString(R.string.progress),1).apply()
+                            val intent= Intent(this@CameraXActivity, MainActivity::class.java)
+                            intent.putExtra("Tuto",200)
+                            intent.putExtra("file",file!!.path)
+                            intent.putExtra("time",mTimerSec)
+                            startActivity(intent)
+                            finish()
+                            //val prefs = getSharedPreferences("sample", Context.MODE_PRIVATE)
+                            //prefs.edit().putBoolean(getString(R.string.now_editing),true).apply()
+                            //OpenCV(file!!.path,applicationContext,mTimerSec)
+
+                            /*val intent = Intent(applicationContext,OpenCVIntentService::class.java)
+                            intent.putExtra("file", file!!.path)
+                            intent.putExtra("taskSec",taskSec)
+                            OpenCVIntentService().enqueueWork(this@CameraXActivity,intent)
+    */
+
+                            /*val myData: Data = workDataOf("file" to file.toString(), "taskSec" to taskSec)
+                            val uploadWorkRequest = OneTimeWorkRequestBuilder<EditWorker>()
+                                .setInputData(myData)
+                                .build()
+                            WorkManager.getInstance(this@CameraXActivity).enqueue(uploadWorkRequest)*/
+
+
+                        }
+                        override fun onError(useCaseError: VideoCapture.UseCaseError?, message: String?, cause: Throwable?) {
+                            //Log.d("tag", "ビデオ　しっぱい。。。。: $message")
+                            //Log.d("tag", "ビデオ　しっぱい。。。。: $cause")
+                        }
+                    })
+
+                },3000)
+
             }else{
                 TurnOn = false
+                ScoreStop = false
                 videoCapture.stopRecording()
                 backButton.visibility = View.VISIBLE
+                captureButton.visibility = View.INVISIBLE
                 mTimer!!.cancel()
-                videoCapture.stopRecording()
-                sound.play(MediaActionSound.STOP_VIDEO_RECORDING)//シャッター音
+                //sound.play(MediaActionSound.STOP_VIDEO_RECORDING)//シャッター音
 
                 //CameraDialog().showDialog(this, mTimerSec,this)
-                CameraDialogFragment(mTimerSec).show(supportFragmentManager,"sample")
-                Storage().editScores(this,mTimerSec)
-
-                mTimerSec=0
-                timer.text = "00:00"
-                //Log.d("tag", "ビデオ　すとっぴ")
+                //CameraDialogFragment(mTimerSec,graphicOverlay.point()).show(supportFragmentManager,"sample")
+                //mTimerSec=0
+                //timer.text = "00:00"
             }
 
         }
@@ -258,14 +288,6 @@ class CameraXActivity : AppCompatActivity(){
         }
     }
 
-    /**
-     * 定義されたパーミッションをチェックします
-     *
-     * private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-    ContextCompat.checkSelfPermission(
-    this, it) == PackageManager.PERMISSION_GRANTED
-    }
-     */
 
     private fun allPermissionsGranted(): Boolean {
         for (permission in REQUIRED_PERMISSIONS) {
@@ -279,14 +301,17 @@ class CameraXActivity : AppCompatActivity(){
 
 
     private fun TimeRecorder(context:Context){
+        val mHandler = Handler(Looper.getMainLooper())//Handler()
         mTimer = Timer()
         mTimer!!.schedule(object : TimerTask() {
             override fun run() {
                 mTimerSec += 1
+
                 mHandler.post {
                     timer.text = showTime(mTimerSec)
                     if(mTimerSec==taskSec){
                         Sounds.getInstance(this@CameraXActivity).playSound(Sounds.SOUND_DRUMROLL)
+                        ScoreStop = false//時間がきたらポーズ検出のスコアを止める。
                     }
                     if (mTimerSec >= taskSec && taskSec != 0) {
                         backView.setBackgroundColor(Color.GREEN)

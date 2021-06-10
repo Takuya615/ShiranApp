@@ -4,11 +4,10 @@
     tools:context="jp.tsumura.takuya.self_maintenance.MainActivity">
 
 
-
     <item
     android:id="@+id/action_settings"
     android:orderInCategory="100"
-    android:title="アカウント設定"
+    android:title="設定"
     app:showAsAction="never" />
 
 

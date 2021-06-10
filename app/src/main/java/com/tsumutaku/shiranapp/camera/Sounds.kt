@@ -17,7 +17,7 @@ class Sounds constructor(context: Context) {
     companion object {
 
         var SOUND_DRUMROLL = 0
-        var SAD_TROMBONE = 0
+        var SAD_TROMBONE = 10
 
         var INSTANCE:Sounds? = null
         fun getInstance(context: Context) =
@@ -64,7 +64,7 @@ class Sounds constructor(context: Context) {
         soundPool?.let {
             println("サウンドファイルロード")
             SOUND_DRUMROLL = it.load(context, R.raw.decision8, 1)
-            SAD_TROMBONE = it.load(context, R.raw.decision8, 1)
+            SAD_TROMBONE = it.load(context, R.raw.cheers, 1)
         }
     }
 

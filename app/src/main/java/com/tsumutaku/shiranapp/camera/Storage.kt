@@ -3,20 +3,24 @@ package com.tsumutaku.shiranapp.camera
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
-import android.provider.Settings.Global.getString
-
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.AuthResult
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FileDownloadTask
+import com.google.firebase.storage.StreamDownloadTask
+import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
+import com.tsumutaku.shiranapp.MainActivity
 import com.tsumutaku.shiranapp.R
+import com.tsumutaku.shiranapp.camera.CameraDialogFragment2.Companion.loadArrayList
+import com.tsumutaku.shiranapp.ui.home.HomeViewModel
 import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.*
+
 
 class Storage {
 
@@ -24,9 +28,8 @@ class Storage {
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
 
-    fun savefile(file: File){
-        //Log.d("tag", "ビデオの撮影成功！！！！！ : $file")
-
+    fun savefile(context: Context,file: File){
+        if(MainActivity.debag){Log.i(MainActivity.TAG, "ストレージ開始　file$file")}
         val path = System.currentTimeMillis()
         val user = mAuth.currentUser
         val storage = Firebase.storage
@@ -34,11 +37,15 @@ class Storage {
         val photoRef = storageRef.child("${user!!.uid}/$path.mp4")
         val movieUri = Uri.fromFile(file)
         val uploadTask = photoRef.putFile(movieUri)
-        // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener {
-            //Log.e("tag", "ストレージへ保存失敗")
+        val prefs = context.getSharedPreferences("preferences_key_sample", Context.MODE_PRIVATE)
+
+        uploadTask
+        .addOnFailureListener {
+            if(MainActivity.debag){Log.i(MainActivity.TAG, "ストレージへ保存しっぱい")}
+            prefs.edit().putInt(context.getString(R.string.progress),0).apply()
         }.addOnSuccessListener {
-            //Log.e("tag", "ストレージへ保存成功")
+            if(MainActivity.debag){Log.i(MainActivity.TAG, "ストレージへ保存せいこう")}
+            prefs.edit().putInt(context.getString(R.string.progress),0).apply()
         }.continueWithTask { task ->
             if (!task.isSuccessful) {
                 task.exception?.let {
@@ -49,20 +56,11 @@ class Storage {
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val downloadUri: Uri? = task.result
-                //Log.d("tag", "ダウンロード　$downloadUri")
-
-                //file.delete()
-                //Log.d("tag", "ファイルをこのタイミングで削除")
-                WriteToStore(downloadUri.toString(),path)//Uriと日付を保存する
+                file.delete()
+                WriteToStore(downloadUri.toString(),path)
 
             }
         }
-        /*
-        if(file.exists()){
-            Log.d("tag", "ファイルが存在する")
-        }else{
-            Log.d("tag", "このファイルは存在しない")
-        }                */
     }
 
     fun WriteToStore(fileName:String,path:Long){
@@ -85,7 +83,7 @@ class Storage {
     }
 
 
-    fun editScores(context: Context,mTimerSec: Int){
+    fun editScores(context: Context,mTimerSec: Int,IntensityPoint:Int):Int{
 
         var newCon: Int = 0//連続
         var newRec: Int = 0//復活
@@ -113,25 +111,51 @@ class Storage {
         val listRandam = arrayOf(1.4, 1.2, 1.0, 0.8, 0.6)//スコアのランダム要素
         val ran = listRandam.random()
 
+        val cal = Calendar.getInstance()
+        val year = cal.get(Calendar.YEAR)
+        val month= cal.get(Calendar.MONTH)//　　注意　　1月が　0　１２月が　11
+        val key = "$year-$month"
+        val jsonList:ArrayList<String> = loadArrayList(context,key)
+        //val numbers = arrayListOf<String>()
+
         if (different == 1) {
             newCon = continuous + 1//継続日数
             newRec = recover//復活数
             newtot = totalD + 1//総日数
-            point = 100 * newtot * ran//その日のスコア値
+            point = 100 * newtot * ran + IntensityPoint//その日のスコア値
+
+            jsonList.add(IntensityPoint.toString())//今日の分のスコア
+            //numbers.addAll(jsonList)
+            //numbers.add()
 
         } else if (different >= 2) {
             newCon = 0//継続リセット
             newRec = recover + 1//復活数
             newtot = totalD + 1//総日数
             DoNot = DoNot + different - 1
-            point = 100 * newtot * ran//その日のスコア値
+            point = 100 * newtot * ran + IntensityPoint//その日のスコア値
+
+            if(different > now.dayOfMonth){// さぼりが翌月まで続いている場合
+                for (i in 2..now.dayOfMonth) {
+                    jsonList.add("")
+                }
+                if(MainActivity.debag){Log.e("tag", "翌月までさぼり続いてるパティーン")}
+            }else{
+                for (i in 2..different) {// 今月中のさぼりは今月分にカウントされる
+                    jsonList.add("")
+                }
+                if(MainActivity.debag){Log.e("tag", "今月のさぼりパティーン")}
+            }
+            //jsonList.forEach{ numbers.add(it) }
+            jsonList.add(IntensityPoint.toString())//今日の分のスコア
 
         } else if (different == 0) {
             newCon = continuous//継続日数
             newRec = recover//復活数
             newtot = totalD//総日数
-
         }
+        if(MainActivity.debag){Log.e("tag", "生成された配列は$jsonList ")}
+        CameraDialogFragment2.saveArrayList(context,key, jsonList)
 
         //継続日数の最長値を保存する
         val MAX: Int = prefs.getInt(context.getString(R.string.score_MAX), 0)
@@ -178,7 +202,7 @@ class Storage {
         customView.score.text = "     経験値              ${point.toInt()}"
 
          */
-
+        return point.toInt()
 
     }
     companion object{

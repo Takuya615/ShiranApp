@@ -4,10 +4,12 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="false"
@@ -16,14 +18,17 @@
         android:roundIcon="@mipmap/shira_app_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ShiranApp">
-        <activity android:name=".ui.video.GalleryActivity"></activity>
+        <activity android:name=".camera.CameraXXActivity"></activity>
+        <activity android:name=".setting.FriendSearchActivity" />
+        <activity android:name=".ui.friends.GalleryActivity" />
         <activity android:name=".setting.AccountSettingActivity" />
         <activity android:name=".setting.PrivacyPolicyActivity" />
         <activity android:name=".setting.LoginActivity" />
         <activity android:name=".camera.CameraXActivity" />
+
         <activity
             android:name=".setting.tutorial.TutorialActivity"
-            android:theme="@style/WelcomeScreenTheme"/>
+            android:theme="@style/WelcomeScreenTheme" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
@@ -33,6 +38,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".camera.OpenCVIntentService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"/>
     </application>
 
 </manifest>
