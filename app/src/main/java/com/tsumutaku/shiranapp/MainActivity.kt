@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         charenge.setOnClickListener {
-            //¸イベントログ
+            //¸イベントログろぐ
             if(!MainActivity.debag){
                 val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
                 val bundle = Bundle()
@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
     }
 //
     companion object{
-        val debag = false//　　　　　デバック時　全てのログとFirebaseイベントログを作動させない 本番でfalse
+        val debag = true//　　　　　デバック時　全てのログとFirebaseイベントログを作動させない 本番でfalse
         val TAG = "MainActivity"
     }
 }
